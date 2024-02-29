@@ -1,0 +1,7 @@
+torch
+ray
+hydra-core
+numpy
+rich
+tqdm
+wandb

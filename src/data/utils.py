@@ -4,7 +4,12 @@ import copy
 
 # config
 import yaml
-config = yaml.safe_load(open('./config.yaml', 'r'))
+# If called from the command line, the following code will be executed
+try:
+    config = yaml.safe_load(open("./config.yaml", 'r'))
+except:
+    config = yaml.safe_load(open("./src/data/config.yaml", 'r'))
+    
 OBSTACLE, FREE_SPACE = config['grid_map']['OBSTACLE'], config['grid_map']['FREE_SPACE']
 
 
@@ -14,10 +19,9 @@ random.seed(config['seed'])
 np.random.seed(config['seed'])
 
 
-def load_map(map_name):
-    map_filename = config['map_files'][map_name]
+def get_grid_map(fname):
     grid_map = []
-    with open(map_filename) as fp:
+    with open(fname) as fp:
         line = fp.readline()
         height = int(fp.readline().split(' ')[1])
         width = int(fp.readline().split(' ')[1])
@@ -30,6 +34,15 @@ def load_map(map_name):
                     grid_map[-1].append(OBSTACLE)
                 elif cell == '.':
                     grid_map[-1].append(FREE_SPACE)
+    return grid_map
+
+def load_map(map_name):
+    map_filename = config['map_files'][map_name]
+    try:
+        grid_map = get_grid_map(map_filename)
+    except:
+        map_filename = f"./src/data/{map_filename}"
+        grid_map = get_grid_map(map_filename)
     return grid_map
 
 

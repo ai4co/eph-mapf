@@ -10,3 +10,7 @@ To run the data generation, you may use:
 ```bash
 python3 generate_data.py --num_instances 300
 ```
+
+
+> ![TIP]
+> You may also load more maps inside of the `maps/` folder!

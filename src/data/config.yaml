@@ -3,22 +3,10 @@ grid_map:
     OBSTACLE: 1
 
 map_files:
-    random32: "maps/random-32-32-10.map"
-    random64: "maps/random-64-64-10.map"
     den312d: "maps/den312d.map"
     warehouse: "maps/warehouse-10-20-10-2-1.map"
 
 test_env_settings:
-    - ['random32', 4]
-    - ['random32', 8]
-    - ['random32', 16]
-    - ['random32', 32]
-    - ['random32', 64]
-    - ['random64', 4]
-    - ['random64', 8]
-    - ['random64', 16]
-    - ['random64', 32]
-    - ['random64', 64]
     - ['den312d', 4]
     - ['den312d', 8]
     - ['den312d', 16]

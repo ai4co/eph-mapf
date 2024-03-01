@@ -21,8 +21,8 @@ save_path='./saved_models/eph_net'
 # active_agent_radius = 1 
 
 use_wandb_test = False
-test_folder = './src/data/test_set_movingai'  
-test_data_mode = "sacha" #!
+test_folder = './test_set'  
+data_mode = "sacha" #!
 
 # name, num_agents
 test_env_settings = (

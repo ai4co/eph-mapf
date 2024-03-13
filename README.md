@@ -72,6 +72,12 @@ We are also looking into implementing MAPF in some modern platform (i.e. TorchRL
 
 ---
 
+
+https://github.com/ai4co/eph-mapf/assets/48984123/9d3cd421-1460-4a2f-aaa4-11908c5b666c
+
+
+---
+
 ### Citation
 
 If you find our code or work (or hopefully both!) helpful, please consider citing us:

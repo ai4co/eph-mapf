@@ -93,7 +93,7 @@ class SortedCollection(object):
     def _delkey(self):
         self._setkey(None)
 
-    key = property(_getkey, _setkey, _delkey, 'key function')
+    key = property(_getkey, _setkey, _delkey, "key function")
 
     def clear(self):
         self.__init__([], self._key)
@@ -114,10 +114,10 @@ class SortedCollection(object):
         return reversed(self._items)
 
     def __repr__(self):
-        return '%s(%r, key=%s)' % (
+        return "%s(%r, key=%s)" % (
             self.__class__.__name__,
             self._items,
-            getattr(self._given_key, '__name__', repr(self._given_key))
+            getattr(self._given_key, "__name__", repr(self._given_key)),
         )
 
     def __reduce__(self):
@@ -210,7 +210,7 @@ class SortedCollection(object):
         i = bisect_left(self._keys, k)
         if i != len(self) and self._keys[i] == k:
             return self._items[i]
-        raise ValueError('No item found with key equal to: %r' % (k, ))
+        raise ValueError("No item found with key equal to: %r" % (k,))
 
     def find_le(self, k):
         """Return last item with a key <= k.
@@ -220,7 +220,7 @@ class SortedCollection(object):
         i = bisect_right(self._keys, k)
         if i:
             return self._items[i - 1]
-        raise ValueError('No item found with key at or below: %r' % (k, ))
+        raise ValueError("No item found with key at or below: %r" % (k,))
 
     def find_lt(self, k):
         """Return last item with a key < k.
@@ -230,7 +230,7 @@ class SortedCollection(object):
         i = bisect_left(self._keys, k)
         if i:
             return self._items[i - 1]
-        raise ValueError('No item found with key below: %r' % (k, ))
+        raise ValueError("No item found with key below: %r" % (k,))
 
     def find_ge(self, k):
         """Return first item with a key >= equal to k.
@@ -240,7 +240,7 @@ class SortedCollection(object):
         i = bisect_left(self._keys, k)
         if i != len(self):
             return self._items[i]
-        raise ValueError('No item found with key at or above: %r' % (k, ))
+        raise ValueError("No item found with key at or above: %r" % (k,))
 
     def find_gt(self, k):
         """Return first item with a key > k.
@@ -250,4 +250,4 @@ class SortedCollection(object):
         i = bisect_right(self._keys, k)
         if i != len(self):
             return self._items[i]
-        raise ValueError('No item found with key above: %r' % (k, ))
+        raise ValueError("No item found with key above: %r" % (k,))

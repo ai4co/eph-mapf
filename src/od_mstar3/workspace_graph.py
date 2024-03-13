@@ -85,19 +85,22 @@ diagonal vs non-diagonal move
 """
 
 # Add src to path
-import sys; sys.path.append('src')
+import sys
 
-from od_mstar3.col_set_addition import add_col_set_recursive, add_col_set
-from od_mstar3.col_set_addition import NoSolutionError
-from od_mstar3 import SortedCollection
+sys.path.append("src")
+
 from collections import defaultdict
 from functools import wraps
+
+from od_mstar3 import SortedCollection
+from od_mstar3.col_set_addition import NoSolutionError, add_col_set, add_col_set_recursive
+
 try:
     import ipdb as pdb
 except ImportError:
-    import pdb
+    pass
+
 from od_mstar3 import interface
-import math
 
 # Define values delegated to free spaces and spaces with obstacles
 # in the matrix of the workspace descriptor
@@ -106,16 +109,24 @@ OBS = 1
 # Actions for 4 connected graph
 CONNECTED_4 = ((0, 0), (1, 0), (0, 1), (-1, 0), (0, -1))
 # Actions for 8 connected graph
-CONNECTED_8 = ((0, 0), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1),
-               (0, -1), (1, -1))
+CONNECTED_8 = (
+    (0, 0),
+    (1, 0),
+    (1, 1),
+    (0, 1),
+    (-1, 1),
+    (-1, 0),
+    (-1, -1),
+    (0, -1),
+    (1, -1),
+)
 MAX_COST = 1000000
 # DIAGONAL_COST, note that team policies imports this value as well
-#DIAGONAL_COST = 2 ** .5
+# DIAGONAL_COST = 2 ** .5
 DIAGONAL_COST = 1.4
 
 
 class wrk_node(object):
-
     """Holds information about a node in a policy's graph
 
     Defines __slots__ to decrease program memory usage by allocating
@@ -137,8 +148,17 @@ class wrk_node(object):
     closed, open  - specify when a policy is finalized
     iteration     - current step of policy
     """
-    __slots__ = ['coord', 'policy', 'opt_neighbors', 'cost', 'h', 'closed',
-                 'iteration', 'open']
+
+    __slots__ = [
+        "coord",
+        "policy",
+        "opt_neighbors",
+        "cost",
+        "h",
+        "closed",
+        "iteration",
+        "open",
+    ]
 
     def __init__(self, coord):
         """Initialization function for nodes of astar policy graph.
@@ -175,11 +195,12 @@ def memoize(f):
         except KeyError:
             z = memo[args] = f(*args)
             return z
+
     return inner
 
 
 def node_cmp(n1, n2):
-    """ Sort nodes by cost """
+    """Sort nodes by cost"""
     if n1.cost < n2.cost:
         return -1
     elif n1.cost > n2.cost:
@@ -200,7 +221,7 @@ class Networkx_DiGraph(interface.Graph_Interface):
 
     def __init__(self, graph):
         """graph - networkx.DiGraph specifying the configuration space.
-                   assumes, cost is stored in the cost parameter
+        assumes, cost is stored in the cost parameter
         """
         self.graph = graph
 
@@ -212,7 +233,7 @@ class Networkx_DiGraph(interface.Graph_Interface):
         returns:
         edge cost
         """
-        return self.graph[coord1][coord2]['cost']
+        return self.graph[coord1][coord2]["cost"]
 
     def get_neighbors(self, coord):
         """Returns the out-neighbors of the specified node
@@ -236,7 +257,7 @@ class Networkx_DiGraph(interface.Graph_Interface):
 
 
 class Grid_Graph(interface.Graph_Interface):
-    """ Represents configuration space for grid workspace
+    """Represents configuration space for grid workspace
 
     This graph serves to generate the configuration graph for a
     gridded workspace.  This workspace must be 4-connected, so
@@ -271,8 +292,7 @@ class Grid_Graph(interface.Graph_Interface):
 
         Returns edge_cost of going from coord1 to coord2.
         """
-        if (self._diagonal_cost and coord1[0] != coord2[0] and
-                coord1[1] != coord2[1]):
+        if self._diagonal_cost and coord1[0] != coord2[0] and coord1[1] != coord2[1]:
             return self._diagonal_cost
         return 1
 
@@ -290,8 +310,12 @@ class Grid_Graph(interface.Graph_Interface):
         for i in self.actions:
             new_coord = (i[0] + coord[0], i[1] + coord[1])
             # check if points to a coordinate in the graph
-            if (new_coord[0] < 0 or new_coord[0] >= self.width or
-                    new_coord[1] < 0 or new_coord[1] >= self.height):
+            if (
+                new_coord[0] < 0
+                or new_coord[0] >= self.width
+                or new_coord[1] < 0
+                or new_coord[1] >= self.height
+            ):
                 continue
             if self.world_descriptor[new_coord[0]][new_coord[1]] == OBS:
                 # Points to obstacle
@@ -317,7 +341,7 @@ class Grid_Graph(interface.Graph_Interface):
 
 
 class Grid_Graph_Conn_8(Grid_Graph):
-    """ Configuration graph for gridded workspace with 8 connection
+    """Configuration graph for gridded workspace with 8 connection
 
     This graph serves to generate the configuration graph for gridded
     workspace where each point in the grid has eight neighbors.
@@ -329,8 +353,9 @@ class Grid_Graph_Conn_8(Grid_Graph):
         world_descriptor    - Rectangular matrix, 0 for free cell, 1 for
                               obstacle
         """
-        super(Grid_Graph_Conn_8, self).__init__(world_descriptor,
-                                                diagonal_cost=diagonal_cost)
+        super(Grid_Graph_Conn_8, self).__init__(
+            world_descriptor, diagonal_cost=diagonal_cost
+        )
         self.actions = CONNECTED_8
 
 
@@ -342,8 +367,7 @@ class GridGraphConn4WaitAtGoal(Grid_Graph):
     reduced when a team is ready to be formed.
     """
 
-    def __init__(self, world_descriptor, goal, wait_cost=.0,
-                 diagonal_cost=False):
+    def __init__(self, world_descriptor, goal, wait_cost=0.0, diagonal_cost=False):
         """Initialization for grid graph
 
         world_descriptor - Rectangular matrix, 0 for free cell, 1 for
@@ -355,7 +379,8 @@ class GridGraphConn4WaitAtGoal(Grid_Graph):
                            1 otherwise. included to support subclasses
         """
         super(GridGraphConn4WaitAtGoal, self).__init__(
-            world_descriptor, diagonal_cost=diagonal_cost)
+            world_descriptor, diagonal_cost=diagonal_cost
+        )
         self._goal = goal
         self._wait_cost = wait_cost
 
@@ -372,8 +397,7 @@ class GridGraphConn4WaitAtGoal(Grid_Graph):
         """
         if coord1 == self._goal and coord2 == self._goal:
             return self._wait_cost
-        return super(GridGraphConn4WaitAtGoal, self).get_edge_cost(coord1,
-                                                                   coord2)
+        return super(GridGraphConn4WaitAtGoal, self).get_edge_cost(coord1, coord2)
 
 
 class GridGraphConn8WaitAtGoal(GridGraphConn4WaitAtGoal):
@@ -384,8 +408,7 @@ class GridGraphConn8WaitAtGoal(GridGraphConn4WaitAtGoal):
     reduced when a team is ready to be formed.
     """
 
-    def __init__(self, world_descriptor, goal, wait_cost=.0,
-                 diagonal_cost=False):
+    def __init__(self, world_descriptor, goal, wait_cost=0.0, diagonal_cost=False):
         """Initialization for grid graph
 
         world_descriptor - Rectangular matrix, 0 for free cell, 1 for
@@ -397,13 +420,12 @@ class GridGraphConn8WaitAtGoal(GridGraphConn4WaitAtGoal):
                            incur 1 if False
         """
         super(GridGraphConn8WaitAtGoal, self).__init__(
-            world_descriptor, goal, wait_cost=wait_cost,
-            diagonal_cost=diagonal_cost)
+            world_descriptor, goal, wait_cost=wait_cost, diagonal_cost=diagonal_cost
+        )
         self.actions = CONNECTED_8
 
 
-def Workspace_Graph(world_descriptor, goal=None, connect_8=False,
-                    road_rules=True):
+def Workspace_Graph(world_descriptor, goal=None, connect_8=False, road_rules=True):
     """Wrapper function for returning Flood_Fill_Policy objects
 
     Function returns objects with different args depending on the
@@ -420,10 +442,8 @@ def Workspace_Graph(world_descriptor, goal=None, connect_8=False,
                        rightmost neighbor node should always be used
     """
     if connect_8:
-        return Flood_Fill_Policy(world_descriptor, Grid_Graph_Conn_8,
-                                 goal, road_rules)
-    return Flood_Fill_Policy(world_descriptor, Grid_Graph, goal,
-                             road_rules)
+        return Flood_Fill_Policy(world_descriptor, Grid_Graph_Conn_8, goal, road_rules)
+    return Flood_Fill_Policy(world_descriptor, Grid_Graph, goal, road_rules)
 
 
 def compute_heuristic_conn_8(init_pos, coord):
@@ -469,8 +489,14 @@ def compute_heuristic_conn_4(init_pos, coord):
     return sum(map(lambda x, y: abs(x - y), coord, init_pos))
 
 
-def Astar_Graph(world_descriptor, goal=None, connect_8=False,
-                diagonal_cost=False, makespan=False, wait_cost=0.):
+def Astar_Graph(
+    world_descriptor,
+    goal=None,
+    connect_8=False,
+    diagonal_cost=False,
+    makespan=False,
+    wait_cost=0.0,
+):
     """Wrapper function for returning Astar_Policy objects
 
     Different heuristic functions are given to Astar_Policy object
@@ -499,10 +525,16 @@ def Astar_Graph(world_descriptor, goal=None, connect_8=False,
             return Astar_Policy(
                 world_descriptor,
                 lambda x: Grid_Graph_Conn_8(x, diagonal_cost=diagonal_cost),
-                goal=goal, compute_heuristic=h_func)
+                goal=goal,
+                compute_heuristic=h_func,
+            )
         else:
-            return Astar_Policy(world_descriptor, Grid_Graph, goal=goal,
-                                compute_heuristic=compute_heuristic_conn_4)
+            return Astar_Policy(
+                world_descriptor,
+                Grid_Graph,
+                goal=goal,
+                compute_heuristic=compute_heuristic_conn_4,
+            )
     if connect_8:
         if diagonal_cost:
             h_func = compute_heuristic_conn_8_diagonal
@@ -510,20 +542,26 @@ def Astar_Graph(world_descriptor, goal=None, connect_8=False,
             h_func = compute_heuristic_conn_8
         return Astar_Policy(
             world_descriptor,
-            lambda x: GridGraphConn8WaitAtGoal(x, goal,
-                                               wait_cost=wait_cost,
-                                               diagonal_cost=diagonal_cost,
-                                               ),
-            goal, h_func)
-    return Astar_Policy(world_descriptor,
-                        lambda x: GridGraphConn4WaitAtGoal(
-                            x, goal, wait_cost=wait_cost,
-                            diagonal_cost=diagonal_cost),
-                        goal, compute_heuristic_conn_4)
+            lambda x: GridGraphConn8WaitAtGoal(
+                x,
+                goal,
+                wait_cost=wait_cost,
+                diagonal_cost=diagonal_cost,
+            ),
+            goal,
+            h_func,
+        )
+    return Astar_Policy(
+        world_descriptor,
+        lambda x: GridGraphConn4WaitAtGoal(
+            x, goal, wait_cost=wait_cost, diagonal_cost=diagonal_cost
+        ),
+        goal,
+        compute_heuristic_conn_4,
+    )
 
 
 class Astar_Policy(interface.Policy_Interface):
-
     """Class that implements Astar to search config space
 
     Uses resumable A* search instead of the flood fill used in
@@ -534,8 +572,14 @@ class Astar_Policy(interface.Policy_Interface):
     all functions interacting with the workspace are passed into this
     class as arguments.
     """
-    def __init__(self, world_descriptor, config_graph, goal=None,
-                 compute_heuristic=compute_heuristic_conn_4):
+
+    def __init__(
+        self,
+        world_descriptor,
+        config_graph,
+        goal=None,
+        compute_heuristic=compute_heuristic_conn_4,
+    ):
         """Initialization function for Astar_Policy
 
         world_descriptor  - two-dimensional matrix which describes the
@@ -566,7 +610,8 @@ class Astar_Policy(interface.Policy_Interface):
         self.goal_node.cost = 0
         self.goal_node.open = True
         self.open_list = SortedCollection.SortedCollection(
-            [self.goal_node], key=lambda x: -x.cost - x.h)
+            [self.goal_node], key=lambda x: -x.cost - x.h
+        )
 
     def _get_node(self, coord):
         """Returns node specified by coord
@@ -620,11 +665,11 @@ class Astar_Policy(interface.Policy_Interface):
             neighbors = self.get_neighbors(node.coord)
             for i in neighbors:
                 tnode = self._get_node(i)
-                if (tnode.closed or tnode.cost <= node.cost +
-                        self.get_edge_cost(i, node.coord)):
+                if tnode.closed or tnode.cost <= node.cost + self.get_edge_cost(
+                    i, node.coord
+                ):
                     continue
-                tnode.cost = node.cost + self.get_edge_cost(
-                    i, node.coord)
+                tnode.cost = node.cost + self.get_edge_cost(i, node.coord)
                 tnode.policy = node.coord
                 tnode.open = True
                 # Can add tnode directly, and will just skip any
@@ -633,7 +678,7 @@ class Astar_Policy(interface.Policy_Interface):
             if node.coord == coord:
                 # Done, so return the next step
                 return node.policy
-        raise NoSolutionError('Couldn\'t finish individual policy')
+        raise NoSolutionError("Couldn't finish individual policy")
 
     def get_step(self, coord):
         """Gets the policy for the given coordinate
@@ -811,7 +856,6 @@ class Astar_Policy(interface.Policy_Interface):
 
 
 class Astar_DiGraph_Policy(Astar_Policy):
-
     """Class that implements Astar to search configuration spaces that
     are represented as a di graph
 
@@ -826,8 +870,14 @@ class Astar_DiGraph_Policy(Astar_Policy):
     all functions interacting with the workspace are passed into this
     class as arguments.
     """
-    def __init__(self, world_descriptor, config_graph, goal=None,
-                 compute_heuristic=compute_heuristic_conn_4):
+
+    def __init__(
+        self,
+        world_descriptor,
+        config_graph,
+        goal=None,
+        compute_heuristic=compute_heuristic_conn_4,
+    ):
         """Initialization function for Astar_Policy
 
         world_descriptor  - two-dimensional matrix which describes the
@@ -843,8 +893,8 @@ class Astar_DiGraph_Policy(Astar_Policy):
                             because it interacts with the workspace
         """
         super(Astar_DiGraph_Policy, self).__init__(
-            world_descriptor, config_graph, goal=goal,
-            compute_heuristic=compute_heuristic)
+            world_descriptor, config_graph, goal=goal, compute_heuristic=compute_heuristic
+        )
 
     def _compute_path(self, coord):
         """Extends the search to reach the specified node
@@ -884,11 +934,11 @@ class Astar_DiGraph_Policy(Astar_Policy):
             neighbors = self.get_in_neighbors(node.coord)
             for i in neighbors:
                 tnode = self._get_node(i)
-                if (tnode.closed or tnode.cost <= node.cost +
-                        self.get_edge_cost(i, node.coord)):
+                if tnode.closed or tnode.cost <= node.cost + self.get_edge_cost(
+                    i, node.coord
+                ):
                     continue
-                tnode.cost = node.cost + self.get_edge_cost(
-                    i, node.coord)
+                tnode.cost = node.cost + self.get_edge_cost(i, node.coord)
                 tnode.policy = node.coord
                 tnode.open = True
                 # Can add tnode directly, and will just skip any
@@ -897,7 +947,7 @@ class Astar_DiGraph_Policy(Astar_Policy):
             if node.coord == coord:
                 # Done, so return the next step
                 return node.policy
-        raise NoSolutionError('Couldn\'t finish individual policy')
+        raise NoSolutionError("Couldn't finish individual policy")
 
     def get_in_neighbors(self, coord):
         """Wraper for the get_in_neighbors function of the underlying
@@ -921,6 +971,7 @@ class Priority_Graph(interface.Policy_Interface):
     various forms. This way, any work done by the Astar_Policy can be
     leveraged for the priority planner, and vice versa
     """
+
     def __init__(self, astar_policy, max_t=None):
         """initialization for Priority_Graph
 
@@ -947,7 +998,7 @@ class Priority_Graph(interface.Policy_Interface):
         if self.max_t is not None:
             t = min(self.max_t, t)
         step = self.astar_policy.get_step(coord[:2])
-        return step + (t, )
+        return step + (t,)
 
     def get_cost(self, coord):
         """Gets cost of moving to goal from coord
@@ -975,12 +1026,10 @@ class Priority_Graph(interface.Policy_Interface):
         one greater than that of coord
         """
         pos_neighbors = self.astar_policy.get_neighbors((coord[0], coord[1]))
-        return map(lambda x: (x[0], x[1], min(self.max_t, coord[-1] + 1)),
-                   pos_neighbors)
+        return map(lambda x: (x[0], x[1], min(self.max_t, coord[-1] + 1)), pos_neighbors)
 
 
 class Back_Priority_Graph(Priority_Graph):
-
     """Simple wrapper for A* graph which just adds/removes a time
     coordinate to allow for priority planning.
 
@@ -1021,8 +1070,10 @@ class Back_Priority_Graph(Priority_Graph):
                 # Make sure that you can actually get form the initial
                 # position to the suggested vertex in time
                 if self.prune_paths:
-                    if (not self.max_t == 0 and
-                            self.astar_policy.get_cost(pos) <= coord[-1] - 1):
+                    if (
+                        not self.max_t == 0
+                        and self.astar_policy.get_cost(pos) <= coord[-1] - 1
+                    ):
                         neighbors.append((pos[0], pos[1], coord[-1] - 1))
                 else:
                     # Don't check on whether there is time to reach the
@@ -1030,8 +1081,11 @@ class Back_Priority_Graph(Priority_Graph):
                     neighbors.append((pos[0], pos[1], coord[-1] - 1))
             return neighbors
         if self.prune_paths:
-            return [(x[0], x[1], coord[-1] - 1) for x in pos_neighbors
-                    if self.astar_policy.get_cost(x) <= coord[-1] - 1]
+            return [
+                (x[0], x[1], coord[-1] - 1)
+                for x in pos_neighbors
+                if self.astar_policy.get_cost(x) <= coord[-1] - 1
+            ]
         else:
             return [(x[0], x[1], coord[-1] - 1) for x in pos_neighbors]
 
@@ -1070,6 +1124,7 @@ class Limited_Astar_Policy(Astar_Policy):
     legal edges
 
     """
+
     def __init__(self, world_descriptor, goal, limit_graph, connect_8=False):
         Astar_Policy.__init__(self, world_descriptor, goal, connect_8)
         self.limit_graph = limit_graph
@@ -1087,6 +1142,7 @@ class Edge_Checker(interface.Planner_Edge_Checker):
     handled (may require keeping track of state for non-trivial graphs
 
     """
+
     def __init__(self):
         """Takes no arguments, because on grid graph, only the
         coordinates matter
@@ -1143,8 +1199,9 @@ class Edge_Checker(interface.Planner_Edge_Checker):
                 # compute previous? displacement vector.  Have a pass
                 # through or cross over collision if the displacement
                 # vector is the opposite
-                if (disp[0] == -(c2[i][0] - c2[j][0]) and
-                        disp[1] == -(c2[i][1] - c2[j][1])):
+                if disp[0] == -(c2[i][0] - c2[j][0]) and disp[1] == -(
+                    c2[i][1] - c2[j][1]
+                ):
                     return True
         return False
 
@@ -1163,8 +1220,7 @@ class Edge_Checker(interface.Planner_Edge_Checker):
             # compute previous? displacement vector.  Have a pass through
             # or cross over collision if the displacement vector is the
             # opposite
-            if (disp[0] == -(c2[i][0] - c2[-1][0]) and
-                    disp[1] == -(c2[i][1] - c2[-1][1])):
+            if disp[0] == -(c2[i][0] - c2[-1][0]) and disp[1] == -(c2[i][1] - c2[-1][1]):
                 return True
         return False
 
@@ -1201,27 +1257,31 @@ class Edge_Checker(interface.Planner_Edge_Checker):
         new_cols = 0
         for bot in range(len(paths[0])):
             # Check for simultaneous occupation
-            if (cur_coord[0] == paths[check_t][bot][0] and
-                    cur_coord[1] == paths[check_t][bot][1]):
+            if (
+                cur_coord[0] == paths[check_t][bot][0]
+                and cur_coord[1] == paths[check_t][bot][1]
+            ):
                 return True
             if cur_t >= len(paths):
                 # Can't have edge collisions when out-group robots
                 # aren't moving
                 continue
             # Check for pass-through/cross over collisions
-            disp = [prev_coord[0] - paths[prev_t][bot][0],
-                    prev_coord[1] - paths[prev_t][bot][1]]
+            disp = [
+                prev_coord[0] - paths[prev_t][bot][0],
+                prev_coord[1] - paths[prev_t][bot][1],
+            ]
             if abs(disp[1]) > 1 or abs(disp[0]) > 1:
                 continue
             # Compute current displacement vector, and check for
             # inversion
-            if (disp[0] == -(cur_coord[0] - paths[cur_t][bot][0]) and
-                    disp[1] == -(cur_coord[1] - paths[cur_t][bot][1])):
+            if disp[0] == -(cur_coord[0] - paths[cur_t][bot][0]) and disp[1] == -(
+                cur_coord[1] - paths[cur_t][bot][1]
+            ):
                 return True
         return False
 
-    def simple_prio_col_check(self, coord, t, paths, pcoord=None,
-                              conn_8=False):
+    def simple_prio_col_check(self, coord, t, paths, pcoord=None, conn_8=False):
         """Returns true, if collision is detected, false otherwise
         at the moment only used to check the obstacle collisions, but
         didn't want to reject the other code already
@@ -1244,7 +1304,7 @@ class Edge_Checker(interface.Planner_Edge_Checker):
                     paths[t][bot] = tuple(paths[t][bot])
                 # (a) simultaneous occupation of one node
                 if coord == paths[t][bot]:
-                        return True
+                    return True
                 # (b) pass through and cross over collision
                 if pcoord is not None:
                     if not isinstance(pcoord, tuple):
@@ -1255,9 +1315,9 @@ class Edge_Checker(interface.Planner_Edge_Checker):
                     return True
                 # (c) cross over collision in case of conn_8
                 if conn_8:
-                    if self.single_bot_cross_over(paths[t][bot],
-                                                  paths[t - 1][bot], coord,
-                                                  pcoord):
+                    if self.single_bot_cross_over(
+                        paths[t][bot], paths[t - 1][bot], coord, pcoord
+                    ):
                         return True
         # No collision
         return False
@@ -1310,8 +1370,7 @@ class Edge_Checker(interface.Planner_Edge_Checker):
         for i in range(len(c1) - 1):
             for j in range(i + 1, len(c1)):
                 # compute current displacement vector
-                if c1[i] is None or c1[j] is None or c2[i] is None or c2[j] \
-                        is None:
+                if c1[i] is None or c1[j] is None or c2[i] is None or c2[j] is None:
                     continue
                 disp = (c1[i][0] - c1[j][0], c1[i][1] - c1[j][1])
                 if abs(disp[1]) > 1 or abs(disp[0]) > 1:
@@ -1320,8 +1379,9 @@ class Edge_Checker(interface.Planner_Edge_Checker):
                 # pass through collision if the two displacement vectors are
                 # opposites
                 # pdisp = [c2[i][0] - c2[j][0], c2[i][1] - c2[j][1]]
-                if (disp[0] == -(c2[i][0] - c2[j][0]) and
-                        disp[1] == -(c2[i][1] - c2[j][1])):
+                if disp[0] == -(c2[i][0] - c2[j][0]) and disp[1] == -(
+                    c2[i][1] - c2[j][1]
+                ):
                     col_set = adder([frozenset([i, j])], col_set)
         return col_set
 
@@ -1352,8 +1412,7 @@ class Edge_Checker(interface.Planner_Edge_Checker):
             # pass through collision if the two displacement vectors are
             # opposites
             # pdisp = [c2[i][0] - c2[j][0], c2[i][1] - c2[j][1]]
-            if (disp[0] == -(c2[i][0] - c2[j][0]) and
-                    disp[1] == -(c2[i][1] - c2[j][1])):
+            if disp[0] == -(c2[i][0] - c2[j][0]) and disp[1] == -(c2[i][1] - c2[j][1]):
                 col_set = adder([frozenset([i, j])], col_set)
         return col_set
 
@@ -1381,13 +1440,11 @@ class Edge_Checker(interface.Planner_Edge_Checker):
         disp = (pcoord1[0] - pcoord2[0], pcoord1[1] - pcoord2[1])
         if abs(disp[1]) > 1 or abs(disp[0]) > 1:
             return False
-        if (disp[0] == -(coord1[0] - coord2[0]) and
-                disp[1] == -(coord1[1] - coord2[1])):
+        if disp[0] == -(coord1[0] - coord2[0]) and disp[1] == -(coord1[1] - coord2[1]):
             return True
         return False
 
-    def prio_col_check(self, coord, pcoord, t, paths=None, conn_8=False,
-                       recursive=False):
+    def prio_col_check(self, coord, pcoord, t, paths=None, conn_8=False, recursive=False):
         """Collision checking with paths passed as constraints
 
         coord  - current node
@@ -1413,12 +1470,15 @@ class Edge_Checker(interface.Planner_Edge_Checker):
                             col_set = adder([frozenset([i])], col_set)
                             return col_set
                         # pass-through and cross-over
-                        disp = [pcoord[i][0] - paths[t - 1][j][0],
-                                pcoord[i][1] - paths[t - 1][j][1]]
+                        disp = [
+                            pcoord[i][0] - paths[t - 1][j][0],
+                            pcoord[i][1] - paths[t - 1][j][1],
+                        ]
                         if abs(disp[1]) > 1 or abs(disp[0]) > 1:
                             continue
-                        if (disp[0] == -(coord[i][0] - paths[t][j][0]) and
-                                disp[1] == -(coord[i][0] - paths[t][j][1])):
+                        if disp[0] == -(coord[i][0] - paths[t][j][0]) and disp[1] == -(
+                            coord[i][0] - paths[t][j][1]
+                        ):
                             col_set = adder([frozenset([i])], col_set)
                             return col_set
         return None
@@ -1432,6 +1492,7 @@ class NoRotationChecker(interface.Planner_Edge_Checker):
     into the place that was just vacated
 
     """
+
     def __init__(self):
         """Takes no arguments, because on grid graph, only the
         coordinates matter
@@ -1469,8 +1530,7 @@ class NoRotationChecker(interface.Planner_Edge_Checker):
         for i in range(len(c1) - 1):
             for j in range(i + 1, len(c1)):
                 # compute current displacement vector
-                if c1[i] is None or c1[j] is None or c2[i] is None or c2[j] \
-                        is None:
+                if c1[i] is None or c1[j] is None or c2[i] is None or c2[j] is None:
                     continue
                 disp = (c1[i][0] - c1[j][0], c1[i][1] - c1[j][1])
                 if abs(disp[1]) > 1 or abs(disp[0]) > 1:
@@ -1479,8 +1539,9 @@ class NoRotationChecker(interface.Planner_Edge_Checker):
                 # pass through collision if the two displacement vectors are
                 # opposites
                 # pdisp = [c2[i][0] - c2[j][0], c2[i][1] - c2[j][1]]
-                if (disp[0] == -(c2[i][0] - c2[j][0]) and
-                        disp[1] == -(c2[i][1] - c2[j][1])):
+                if disp[0] == -(c2[i][0] - c2[j][0]) and disp[1] == -(
+                    c2[i][1] - c2[j][1]
+                ):
                     col_set = adder([frozenset([i, j])], col_set)
                 elif c1[i] == c2[j] or c1[j] == c2[i]:
                     # There is a rotation, which is banned
@@ -1493,6 +1554,7 @@ class Lazy_Edge_Checker(interface.Planner_Edge_Checker):
     handled (may require keeping track of state for non-trivial graphs
 
     """
+
     def __init__(self):
         """Takes no arguments, because on grid graph, only the
         coordinates matter
@@ -1555,8 +1617,9 @@ class Lazy_Edge_Checker(interface.Planner_Edge_Checker):
                 # over or pass through collision if the two displacement
                 # vectors are opposites
                 # pdisp = [c2[i][0] - c2[j][0], c2[i][1] - c2[j][1]]
-                if (disp[0] == -(c2[i][0] - c2[j][0]) and
-                        disp[1] == -(c2[i][1] - c2[j][1])):
+                if disp[0] == -(c2[i][0] - c2[j][0]) and disp[1] == -(
+                    c2[i][1] - c2[j][1]
+                ):
                     col_set = adder([frozenset([i, j])], col_set)
                     return col_set
         return col_set

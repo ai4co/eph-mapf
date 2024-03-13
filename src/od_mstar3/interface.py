@@ -32,7 +32,6 @@ policies used in Mstar. In general terms, these classes represent:
 
 
 class Graph_Interface(object):
-
     """Interface for configuration space generators
 
     This graph interface enumerates the methods that any
@@ -57,7 +56,6 @@ class Graph_Interface(object):
 
 
 class Policy_Interface(object):
-
     """Interface showing required implemented functions for all policies
 
     This interface enumerates the functions that must be exposed by
@@ -254,8 +252,7 @@ class Planner_Edge_Checker(object):
         """
         raise NotImplementedError
 
-    def simple_prio_col_check(self, coord, t, paths, pcoord=None,
-                              conn_8=False):
+    def simple_prio_col_check(self, coord, t, paths, pcoord=None, conn_8=False):
         """Returns true, if collision is detected, false otherwise
         at the moment only used to check the obstacle collisions, but
         didn't want to reject the other code already
@@ -318,8 +315,7 @@ class Planner_Edge_Checker(object):
         """
         raise NotImplementedError
 
-    def prio_col_check(self, coord, pcoord, t, paths=None, conn_8=False,
-                       recursive=False):
+    def prio_col_check(self, coord, pcoord, t, paths=None, conn_8=False, recursive=False):
         """Collision checking with paths passed as constraints
 
         coord  - current node

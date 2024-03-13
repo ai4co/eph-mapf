@@ -7,21 +7,29 @@ converting everything that can be immutable into an immutable structure
 Intended to support both mstar and rMstar."""
 
 # Add src to path
-import sys; sys.path.append('src')
+import sys
+
+sys.path.append("src")
 
 
-from od_mstar3 import workspace_graph
 import sys
 import time as timer  # So that we can use the time command in ipython
-from od_mstar3 import SortedCollection
-from od_mstar3.col_set_addition import add_col_set_recursive, add_col_set
-from od_mstar3.col_set_addition import effective_col_set
-from od_mstar3.col_set_addition import OutOfTimeError, NoSolutionError, col_set_add
+
+from od_mstar3 import SortedCollection, workspace_graph
+from od_mstar3.col_set_addition import (
+    NoSolutionError,
+    OutOfTimeError,
+    add_col_set,
+    add_col_set_recursive,
+    col_set_add,
+    effective_col_set,
+)
+
 try:
     import ipdb as pdb
 except ImportError:
     # Default to pdb
-    import pdb
+    pass
 
 
 MAX_COST = workspace_graph.MAX_COST
@@ -32,11 +40,24 @@ MOVE_TUPLE = 1  # Tuple of destination coordinate tuples for each robot's move
 global_move_list = []  # Used for visualization
 
 
-def find_path(obs_map, init_pos, goals, recursive=True, inflation=1.0,
-              time_limit=5 * 60.0, astar=False, get_obj=False, connect_8=False,
-              full_space=False, return_memory=False, flood_fill_policy=False,
-              col_checker=None, epemstar=False, makespan=False,
-              col_set_memory=True):
+def find_path(
+    obs_map,
+    init_pos,
+    goals,
+    recursive=True,
+    inflation=1.0,
+    time_limit=5 * 60.0,
+    astar=False,
+    get_obj=False,
+    connect_8=False,
+    full_space=False,
+    return_memory=False,
+    flood_fill_policy=False,
+    col_checker=None,
+    epemstar=False,
+    makespan=False,
+    col_set_memory=True,
+):
     """Finds a path in the specified obstacle environment from the
     initial position to the goal.
 
@@ -76,24 +97,32 @@ def find_path(obs_map, init_pos, goals, recursive=True, inflation=1.0,
                         utillization.  True by default
     """
     global global_move_list
-    if (col_checker is None or isinstance(col_checker,
-                                          workspace_graph.Edge_Checker)):
+    if col_checker is None or isinstance(col_checker, workspace_graph.Edge_Checker):
         goals = tuple(map(tuple, goals))
         init_pos = tuple(map(tuple, init_pos))
     global_move_list = []
-    o = Od_Mstar(obs_map, goals, recursive=recursive, inflation=inflation,
-                 astar=astar, connect_8=connect_8, full_space=full_space,
-                 flood_fill_policy=flood_fill_policy, col_checker=col_checker,
-                 epeastar=epemstar, makespan=makespan,
-                 col_set_memory=col_set_memory)
+    o = Od_Mstar(
+        obs_map,
+        goals,
+        recursive=recursive,
+        inflation=inflation,
+        astar=astar,
+        connect_8=connect_8,
+        full_space=full_space,
+        flood_fill_policy=flood_fill_policy,
+        col_checker=col_checker,
+        epeastar=epemstar,
+        makespan=makespan,
+        col_set_memory=col_set_memory,
+    )
     # Need to make sure that the recursion limit is great enough to
     # actually construct the path
-    longest = max([o.sub_search[(i, )].get_cost(init_pos[i])
-                   for i in range(len(init_pos))])
+    longest = max(
+        [o.sub_search[(i,)].get_cost(init_pos[i]) for i in range(len(init_pos))]
+    )
     # Guess that the longest path will not be any longer than 5 times the
     # longest individual robot path
-    sys.setrecursionlimit(max(sys.getrecursionlimit(), longest * 5 *
-                              len(init_pos)))
+    sys.setrecursionlimit(max(sys.getrecursionlimit(), longest * 5 * len(init_pos)))
     path = o.find_path(init_pos, time_limit=time_limit)
     num_nodes = o.get_memory_useage(False)
     corrected_mem = o.get_memory_useage(True)
@@ -109,11 +138,26 @@ class Od_Mstar(object):
     basic M* as the base computation.
 
     """
-    def __init__(self, obs_map, goals, recursive, sub_search=None,
-                 col_checker=None, rob_id=None, inflation=1.0,
-                 end_time=10 ** 15, connect_8=False, astar=False,
-                 full_space=False, flood_fill_policy=False, epeastar=False,
-                 offset_increment=1, makespan=False, col_set_memory=False):
+
+    def __init__(
+        self,
+        obs_map,
+        goals,
+        recursive,
+        sub_search=None,
+        col_checker=None,
+        rob_id=None,
+        inflation=1.0,
+        end_time=10**15,
+        connect_8=False,
+        astar=False,
+        full_space=False,
+        flood_fill_policy=False,
+        epeastar=False,
+        offset_increment=1,
+        makespan=False,
+        col_set_memory=False,
+    ):
         """
         obs_map           - obstacle map,  matrix with 0 for free,  1
                             for obstacle
@@ -175,8 +219,7 @@ class Od_Mstar(object):
         self.full_space = full_space
         # Need a different key incorporating the offset for EPEM*
         if self.epeastar:
-            self.open_list_key = lambda x: (-x.cost - x.h * self.inflation -
-                                            x.offset)
+            self.open_list_key = lambda x: (-x.cost - x.h * self.inflation - x.offset)
         else:
             self.open_list_key = lambda x: -x.cost - x.h * self.inflation
         if self.rob_id is None:
@@ -197,7 +240,7 @@ class Od_Mstar(object):
 
         side effects to generate self.sub_search and self.policy_keys
         """
-        self.policy_keys = tuple([(i, ) for i in self.rob_id])
+        self.policy_keys = tuple([(i,) for i in self.rob_id])
         self.sub_search = sub_search
         if self.sub_search is None:
             self.sub_search = {}
@@ -206,12 +249,16 @@ class Od_Mstar(object):
             if self.flood_fill_policy:
                 for dex, key in enumerate(self.policy_keys):
                     self.sub_search[key] = workspace_graph.Workspace_Graph(
-                        obs_map, goals[dex], connect_8=self.connect_8)
+                        obs_map, goals[dex], connect_8=self.connect_8
+                    )
             else:
                 for dex, key in enumerate(self.policy_keys):
                     self.sub_search[key] = workspace_graph.Astar_Graph(
-                        obs_map, goals[dex], connect_8=self.connect_8,
-                        makespan=self._makespan)
+                        obs_map,
+                        goals[dex],
+                        connect_8=self.connect_8,
+                        makespan=self._makespan,
+                    )
 
     def get_graph_size(self, correct_for_size=True):
         """Returns the number of nodes in the current graph"""
@@ -245,20 +292,25 @@ class Od_Mstar(object):
         standard_node - whether this is a standard node
         """
         if standard_node:
-            cost = sum(self.sub_search[key].get_cost(coord[dex])
-                       for dex, key in enumerate(self.policy_keys))
+            cost = sum(
+                self.sub_search[key].get_cost(coord[dex])
+                for dex, key in enumerate(self.policy_keys)
+            )
             # return self.inflation * cost
             return cost
         else:
             # Compute heuristic for robots which have moved
-            cost = sum(self.sub_search[key].get_cost(coord[MOVE_TUPLE][dex])
-                       for dex, key in enumerate(
-                           self.policy_keys[:len(coord[MOVE_TUPLE])]))
+            cost = sum(
+                self.sub_search[key].get_cost(coord[MOVE_TUPLE][dex])
+                for dex, key in enumerate(self.policy_keys[: len(coord[MOVE_TUPLE])])
+            )
             # compute heuristic for robots which have not moved
-            cost += sum(self.sub_search[key].get_cost(
-                coord[POSITION][dex + len(coord[MOVE_TUPLE])])
-                for dex, key in enumerate(self.policy_keys[len(coord[
-                    MOVE_TUPLE]):]))
+            cost += sum(
+                self.sub_search[key].get_cost(
+                    coord[POSITION][dex + len(coord[MOVE_TUPLE])]
+                )
+                for dex, key in enumerate(self.policy_keys[len(coord[MOVE_TUPLE]) :])
+            )
             return cost
 
     def pass_through(self, coord1, coord2):
@@ -293,11 +345,11 @@ class Od_Mstar(object):
         collision_set formed form the colliding robots during the move
         """
         col_set = self.col_checker.incremental_cross_over(
-            start_coord, new_coord, self.recursive)
+            start_coord, new_coord, self.recursive
+        )
         if col_set:
             return col_set
-        return self.col_checker.incremental_col_check(
-            new_coord, self.recursive)
+        return self.col_checker.incremental_col_check(new_coord, self.recursive)
 
     def get_node(self, coord, standard_node):
         """Returns the node at the specified coordinates.
@@ -322,7 +374,7 @@ class Od_Mstar(object):
             # Only check for collisions between robots whose move has
             # been determined
             col = self.col_checker.col_check(coord[MOVE_TUPLE], self.recursive)
-        free = (len(col) == 0)
+        free = len(col) == 0
         t_node = mstar_node(coord, free, self.recursive, standard_node)
         # Cache the resultant col_set
         t_node.col_set = col
@@ -392,7 +444,7 @@ class Od_Mstar(object):
             # query to this object, you will always get a timeout,
             # regardless of the time limit used on the second query
             for planner in self.sub_search.values():
-                if hasattr(planner, 'end_time'):
+                if hasattr(planner, "end_time"):
                     planner.end_time = self.end_time
 
         # Configure the goal node
@@ -401,8 +453,7 @@ class Od_Mstar(object):
         # Use the negation of the cost,  so SortedCollection will put the
         # lowest value item at the right of its internal list
         init_nodes = self.gen_init_nodes(init_pos)
-        open_list = SortedCollection.SortedCollection(init_nodes,
-                                                      key=self.open_list_key)
+        open_list = SortedCollection.SortedCollection(init_nodes, key=self.open_list_key)
 
         while len(open_list) > 0:
             if timer.time() > self.end_time:
@@ -448,9 +499,9 @@ class Od_Mstar(object):
         # AND DOES NOT RETURN NEIGHBORS FOR WHICH THERE IS ALREADY A
         # PATH AT LEAST AS GOOD
         if self.recursive:
-            neighbors,  col_set = self.get_neighbors_recursive(node)
+            neighbors, col_set = self.get_neighbors_recursive(node)
         else:
-            neighbors,  col_set = self.get_neighbors_nonrecursive(node)
+            neighbors, col_set = self.get_neighbors_nonrecursive(node)
 
         # node is the only element in the backpropagation sets of
         # neighbors that has changed,  so we can backpropagate from here
@@ -509,17 +560,18 @@ class Od_Mstar(object):
             start_coord = node.coord[POSITION]
             move_list = node.coord[MOVE_TUPLE]
             rob_dex = len(node.coord[MOVE_TUPLE])
-        if ((len(node.col_set) > 0 and rob_dex in node.col_set[0]) or
-                self.full_space):
+        if (len(node.col_set) > 0 and rob_dex in node.col_set[0]) or self.full_space:
             # This robot is in the collision set,  so consider all
             # possible neighbors
-            neighbors = self.sub_search[
-                self.policy_keys[rob_dex]].get_neighbors(start_coord[rob_dex])
+            neighbors = self.sub_search[self.policy_keys[rob_dex]].get_neighbors(
+                start_coord[rob_dex]
+            )
         else:
-            neighbors = [self.sub_search[self.policy_keys[rob_dex]].get_step(
-                start_coord[rob_dex])]
+            neighbors = [
+                self.sub_search[self.policy_keys[rob_dex]].get_step(start_coord[rob_dex])
+            ]
         # check if this is the last robot to be moved
-        filled = (rob_dex == (self.num_bots - 1))
+        filled = rob_dex == (self.num_bots - 1)
 
         new_neighbors = []
         # visualize_holder = []
@@ -531,7 +583,7 @@ class Od_Mstar(object):
             # Check for collisions in the transition to the new
             # position, only need to consider the robots in the move list
             # pass through
-            pass_col = self.pass_through(start_coord[:rob_dex + 1], new_moves)
+            pass_col = self.pass_through(start_coord[: rob_dex + 1], new_moves)
             if len(pass_col) > 0:
                 # Have robot-robot collisions
                 col_set = col_set_add(pass_col, col_set, self.recursive)
@@ -558,8 +610,7 @@ class Od_Mstar(object):
                 continue
             # Handle costs, which depends soely on the move list,
             # function to allow for alternate cost functions
-            temp_cost = self.od_mstar_transition_cost(start_coord, node.cost,
-                                                      i, rob_dex)
+            temp_cost = self.od_mstar_transition_cost(start_coord, node.cost, i, rob_dex)
             if temp_cost >= new_node.cost:
                 continue
             new_node.cost = temp_cost
@@ -571,8 +622,7 @@ class Od_Mstar(object):
                 new_node.add_col_set(node.col_set)
         return new_neighbors, col_set
 
-    def od_mstar_transition_cost(self, start_coord, prev_cost, neighbor,
-                                 rob_dex):
+    def od_mstar_transition_cost(self, start_coord, prev_cost, neighbor, rob_dex):
         """Computes the transition cost for a single robot in od_mstar
         neighbor generation
 
@@ -586,7 +636,8 @@ class Od_Mstar(object):
         cost of a single robot transitioning state
         """
         prev_cost += self.sub_search[self.policy_keys[rob_dex]].get_edge_cost(
-            start_coord[rob_dex], neighbor)
+            start_coord[rob_dex], neighbor
+        )
         return prev_cost
 
     def gen_epeastar_coords(self, node):
@@ -609,8 +660,9 @@ class Od_Mstar(object):
         if len(node.col_set) == 0:
             # have empty collision set
             new_coord = tuple(
-                self.sub_search[self.policy_keys[dex]].get_step(
-                    coord[dex]) for dex in range(self.num_bots))
+                self.sub_search[self.policy_keys[dex]].get_step(coord[dex])
+                for dex in range(self.num_bots)
+            )
             pass_col = self.pass_through(coord, new_coord)
             if pass_col:
                 return [], pass_col
@@ -623,20 +675,21 @@ class Od_Mstar(object):
         node_col = node.col_set[0]
         for rob_dex in range(self.num_bots):
             if rob_dex in node_col:
-                offsets = self.sub_search[
-                    self.policy_keys[rob_dex]].get_offsets(coord[rob_dex])
+                offsets = self.sub_search[self.policy_keys[rob_dex]].get_offsets(
+                    coord[rob_dex]
+                )
             else:
-                offsets = (0, )
+                offsets = (0,)
             new_list = []
             for cost, pos in search_list:
                 for off in offsets:
                     if rob_dex < self.num_bots - 1:
                         if off + cost <= offset:
-                            new_list.append((off + cost, pos + (off, )))
+                            new_list.append((off + cost, pos + (off,)))
                     elif off + cost == offset:
                         # For the last robot,  only want to keep costs which
                         # match perfectly
-                        new_list.append((off + cost, pos + (off, )))
+                        new_list.append((off + cost, pos + (off,)))
                 search_list = new_list
         neighbors = []
         col_set = []
@@ -644,16 +697,17 @@ class Od_Mstar(object):
             gen_list = [()]
             for dex, c in enumerate(costs):
                 if dex in node_col:
-                    neib = (self.sub_search[
-                            self.policy_keys[dex]].get_offset_neighbors(
-                            coord[dex], c))
+                    neib = self.sub_search[self.policy_keys[dex]].get_offset_neighbors(
+                        coord[dex], c
+                    )
                 else:
-                    neib = ((0, self.sub_search[
-                        self.policy_keys[dex]].get_step(coord[dex])),)
+                    neib = (
+                        (0, self.sub_search[self.policy_keys[dex]].get_step(coord[dex])),
+                    )
                 new_list = []
                 for _, n in neib:
                     for old in gen_list:
-                        new_coord = old + (n, )
+                        new_coord = old + (n,)
                         # Perform collision checking
                         tcol = self.incremental_col_check(coord, new_coord)
                         if tcol:
@@ -713,7 +767,8 @@ class Od_Mstar(object):
         """
         for dex, (source, target) in enumerate(zip(start_coord, new_coord)):
             prev_cost += self.sub_search[self.policy_keys[dex]].get_edge_cost(
-                source, target)
+                source, target
+            )
         return prev_cost
 
     def get_neighbors_nonrecursive(self, node):
@@ -739,14 +794,22 @@ class Od_Mstar(object):
 
         new OD_Mstar instance to perform search for the specified subset
         of robots"""
-        return Od_Mstar(self.obs_map, new_goals, self.recursive,
-                        sub_search=self.sub_search,
-                        col_checker=self.col_checker, rob_id=rob_id,
-                        inflation=self.inflation,
-                        end_time=self.end_time, connect_8=self.connect_8,
-                        astar=self.astar, full_space=self.full_space,
-                        epeastar=self.epeastar, makespan=self._makespan,
-                        col_set_memory=self._col_set_memory)
+        return Od_Mstar(
+            self.obs_map,
+            new_goals,
+            self.recursive,
+            sub_search=self.sub_search,
+            col_checker=self.col_checker,
+            rob_id=rob_id,
+            inflation=self.inflation,
+            end_time=self.end_time,
+            connect_8=self.connect_8,
+            astar=self.astar,
+            full_space=self.full_space,
+            epeastar=self.epeastar,
+            makespan=self._makespan,
+            col_set_memory=self._col_set_memory,
+        )
 
     def get_subplanner_keys(self, col_set):
         """Returns keys to subplanners required for planning for some
@@ -760,8 +823,7 @@ class Od_Mstar(object):
         """
         # Convert the collision sets into the global indicies,  and
         # convert to tuples.  Assumes self.rob_id is sorted
-        global_col = list(map(lambda y: tuple(map(lambda x: self.rob_id[x], y)),
-                         col_set))
+        global_col = list(map(lambda y: tuple(map(lambda x: self.rob_id[x], y)), col_set))
         # generate the sub planners,  if necessary
         for dex, gc in enumerate(global_col):
             if gc not in self.sub_search:
@@ -810,19 +872,22 @@ class Od_Mstar(object):
         # their sub_search keys
         coupled_keys = self.get_subplanner_keys(col_set)
         # Generate the individually optimal step
-        new_coord = [self.sub_search[self.policy_keys[i]].get_step(
-            start_coord[i]) for i in range(self.num_bots)]
+        new_coord = [
+            self.sub_search[self.policy_keys[i]].get_step(start_coord[i])
+            for i in range(self.num_bots)
+        ]
         # Iterate over the colliding sets of robots,  and integrate the
         # results of the sup planning for each set
         for i in range(len(col_set)):
             # if use_memory and frozenset(col_set[i]) in node.prev_col_set:
-                # assert self.sub_search[
-                #     coupled_keys[i]].graph[
-                #         tuple([start_coord[j]
-                #                for j in col_set[i]])].forwards_ptr != None
+            # assert self.sub_search[
+            #     coupled_keys[i]].graph[
+            #         tuple([start_coord[j]
+            #                for j in col_set[i]])].forwards_ptr != None
             try:
                 new_step = self.sub_search[coupled_keys[i]].get_step(
-                    tuple([start_coord[j] for j in col_set[i]]))
+                    tuple([start_coord[j] for j in col_set[i]])
+                )
             except NoSolutionError:
                 # Can't get to the goal from here
                 return [], []
@@ -840,15 +905,14 @@ class Od_Mstar(object):
         if node not in new_node.back_prop_set:
             new_node.back_prop_set.append(node)
         if not new_node.free:
-            return [],  new_node.col_set
+            return [], new_node.col_set
         # Skip if closed
         if new_node.closed:
-            return [],  new_node.col_set
+            return [], new_node.col_set
         # Compute the costs. THIS MAY NOT WORK IF node IS AN INTERMEDIATE
         # NODE
         t_cost = self.get_node(start_coord, True).cost
-        t_cost = self.od_rmstar_transition_cost(start_coord, t_cost,
-                                                new_node.coord)
+        t_cost = self.od_rmstar_transition_cost(start_coord, t_cost, new_node.coord)
         if t_cost < new_node.cost:
             new_node.cost = t_cost
             if self._col_set_memory:
@@ -870,7 +934,8 @@ class Od_Mstar(object):
         """
         for dex, (source, target) in enumerate(zip(start_coord, new_coord)):
             prev_cost += self.sub_search[self.policy_keys[dex]].get_edge_cost(
-                source, target)
+                source, target
+            )
         return prev_cost
 
     def alt_get_astar_neighbors(self, node):
@@ -890,8 +955,10 @@ class Od_Mstar(object):
         """
         start_coord = node.coord
         # Generate the individually optimal setp
-        base_coord = [self.sub_search[self.policy_keys[i]].get_step(
-            start_coord[i]) for i in range(self.num_bots)]
+        base_coord = [
+            self.sub_search[self.policy_keys[i]].get_step(start_coord[i])
+            for i in range(self.num_bots)
+        ]
         old_coords = [base_coord]
         assert len(node.col_set) <= 1
         to_explore = node.col_set
@@ -900,8 +967,9 @@ class Od_Mstar(object):
         for i in to_explore:
             for bot in i:
                 new_coords = []
-                neighbors = self.sub_search[self.policy_keys[bot]]\
-                                .get_neighbors(start_coord[bot])
+                neighbors = self.sub_search[self.policy_keys[bot]].get_neighbors(
+                    start_coord[bot]
+                )
                 for neigh in neighbors:
                     for k in old_coords:
                         temp = k[:]
@@ -929,7 +997,8 @@ class Od_Mstar(object):
             t_cost = node.cost
             for j in range(len(start_coord)):
                 t_cost += self.sub_search[self.policy_keys[j]].get_edge_cost(
-                    start_coord[i], new_node.coord[j])
+                    start_coord[i], new_node.coord[j]
+                )
             if t_cost < new_node.cost:
                 new_node.cost = t_cost
                 new_node.back_ptr = node
@@ -952,8 +1021,10 @@ class Od_Mstar(object):
         """
         start_coord = node.coord
         # Generate the individually optimal setp
-        base_coord = [self.sub_search[self.policy_keys[i]].get_step(
-            start_coord[i]) for i in range(self.num_bots)]
+        base_coord = [
+            self.sub_search[self.policy_keys[i]].get_step(start_coord[i])
+            for i in range(self.num_bots)
+        ]
         old_coords = [base_coord]
         assert len(node.col_set) <= 1
         to_explore = node.col_set
@@ -962,8 +1033,9 @@ class Od_Mstar(object):
         for i in to_explore:
             for bot in i:
                 new_coords = []
-                neighbors = self.sub_search[self.policy_keys[bot]]\
-                                .get_neighbors(start_coord[bot])
+                neighbors = self.sub_search[self.policy_keys[bot]].get_neighbors(
+                    start_coord[bot]
+                )
                 for neigh in neighbors:
                     for k in old_coords:
                         temp = k[:]
@@ -981,9 +1053,9 @@ class Od_Mstar(object):
             if node.free:
                 t_cost = node.cost
                 for j in range(len(start_coord)):
-                    t_cost += self.sub_search[
-                        self.policy_keys[j]].get_edge_cost(start_coord[j],
-                                                           i[j])
+                    t_cost += self.sub_search[self.policy_keys[j]].get_edge_cost(
+                        start_coord[j], i[j]
+                    )
                 if t_cost >= new_node.cost:
                     continue
             # Check if we can get there
@@ -1015,13 +1087,29 @@ class mstar_node(object):
     move_tuple)
     """
 
-    __slots__ = ['free', 'coord', 'updated', 'open', 'closed', 'standard_node',
-                 'h', 'cost', 'back_ptr', 'back_prop_set', 'col_set',
-                 'recursive', 'forwards_ptr', 'assignment', 'colset_changed',
-                 'offset', 'prev_col_set']
+    __slots__ = [
+        "free",
+        "coord",
+        "updated",
+        "open",
+        "closed",
+        "standard_node",
+        "h",
+        "cost",
+        "back_ptr",
+        "back_prop_set",
+        "col_set",
+        "recursive",
+        "forwards_ptr",
+        "assignment",
+        "colset_changed",
+        "offset",
+        "prev_col_set",
+    ]
 
-    def __init__(self, coord, free, recursive, standard_node, back_ptr=None,
-                 forwards_ptr=None):
+    def __init__(
+        self, coord, free, recursive, standard_node, back_ptr=None, forwards_ptr=None
+    ):
         """Constructor for mstar_node
 
         Assumes the col_set is empty by default
@@ -1153,7 +1241,7 @@ class mstar_node(object):
             temp = add_col_set_recursive(c, self.col_set)
         else:
             temp = add_col_set(c, self.col_set)
-        modified = (temp != self.col_set)
+        modified = temp != self.col_set
         if modified:
             self.col_set = temp
             return True
@@ -1225,32 +1313,51 @@ def individually_optimal_paths(obs_map, init_pos, goals):
     return jpath
 
 
-def find_path_limited_graph(obs_map, init_pos, goals, recursive=True,
-                            inflation=1.0, time_limit=5 * 60.0, astar=False,
-                            get_obj=False, connect_8=False, full_space=False,
-                            return_memory=False, flood_fill_policy=False,
-                            pruning_passes=5):
+def find_path_limited_graph(
+    obs_map,
+    init_pos,
+    goals,
+    recursive=True,
+    inflation=1.0,
+    time_limit=5 * 60.0,
+    astar=False,
+    get_obj=False,
+    connect_8=False,
+    full_space=False,
+    return_memory=False,
+    flood_fill_policy=False,
+    pruning_passes=5,
+):
     global global_move_list
     global_move_list = []
-    o = Od_Mstar(obs_map, goals, recursive=recursive, inflation=inflation,
-                 astar=astar, connect_8=connect_8, full_space=full_space,
-                 flood_fill_policy=flood_fill_policy)
+    o = Od_Mstar(
+        obs_map,
+        goals,
+        recursive=recursive,
+        inflation=inflation,
+        astar=astar,
+        connect_8=connect_8,
+        full_space=full_space,
+        flood_fill_policy=flood_fill_policy,
+    )
     import prune_graph
+
     G = prune_graph.to_networkx_graph(obs_map)
     for i in range(pruning_passes):
         G = prune_graph.prune_opposing_edge(G, num_edges=5)
     # Replace the individual policies with limited graphs
     for i in range(len(o.goals)):
-        o.sub_search[(i, )] = workspace_graph.Networkx_Graph(
-            obs_map, goals[i], graph=G, connect_8=connect_8)
+        o.sub_search[(i,)] = workspace_graph.Networkx_Graph(
+            obs_map, goals[i], graph=G, connect_8=connect_8
+        )
     # Need to make sure that the recursion limit is great enough to
     # actually construct the path
-    longest = max([o.sub_search[(i, )].get_cost(init_pos[i])
-                   for i in range(len(init_pos))])
+    longest = max(
+        [o.sub_search[(i,)].get_cost(init_pos[i]) for i in range(len(init_pos))]
+    )
     # Guess that the longest path will not be any longer than 5 times the
     # longest individual robot path
-    sys.setrecursionlimit(max(sys.getrecursionlimit(), longest * 5 *
-                              len(init_pos)))
+    sys.setrecursionlimit(max(sys.getrecursionlimit(), longest * 5 * len(init_pos)))
     path = o.find_path(init_pos, time_limit=time_limit)
     num_nodes = o.get_memory_useage(False)
     corrected_mem = o.get_memory_useage(True)

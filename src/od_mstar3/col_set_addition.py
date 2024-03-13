@@ -71,7 +71,7 @@ def add_col_set(c1, c2):
         temp = temp.union(i)
     if len(temp) == 0:
         return ()
-    return (temp, )
+    return (temp,)
 
 
 def col_set_add(c1, c2, recursive):
@@ -128,13 +128,13 @@ def effective_col_set(col_set, prev_col_set):
     effective_set = []
     prev_col_set = list(prev_col_set)
     col_set = list(col_set)
-    while(len(prev_col_set) > 0):
+    while len(prev_col_set) > 0:
         # Need to keep around the elements of col_set that won't be
         # used, because the containing element of prev_col_set may be
         # invalidated by a later element of col_set
         col_set_to_remove = []
         j = 0
-        while (j < len(col_set)):
+        while j < len(col_set):
             if col_set[j].issubset(prev_col_set[-1]):
                 # this element is contained in prev_col_set, so can be
                 # skipped unless prev_col_set-1] is invalidated by some

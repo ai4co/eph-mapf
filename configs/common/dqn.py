@@ -2,7 +2,7 @@
 lr = 2e-4
 lr_scheduler_milestones = [40000, 80000]
 lr_scheduler_gamma = 0.5
-weight_decay = 0 # as original, no weight decay
+weight_decay = 0  # as original, no weight decay
 
 # basic training setting
 num_actors = 16
@@ -21,14 +21,14 @@ burn_in_steps = 20
 actor_update_steps = 200
 
 # gradient norm clipping
-grad_norm_dqn=40
+grad_norm_dqn = 40
 
 # n-step forward
 forward_steps = 2
 
 # prioritized replay
-prioritized_replay_alpha=0.6
-prioritized_replay_beta=0.4
+prioritized_replay_alpha = 0.6
+prioritized_replay_beta = 0.4
 
 # curriculum learning
 init_env_settings = (1, 10)
@@ -47,4 +47,3 @@ max_comm_agents = 3
 
 # curriculum learning
 cl_history_size = 100
-

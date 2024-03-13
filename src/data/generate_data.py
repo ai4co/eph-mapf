@@ -1,20 +1,21 @@
 import argparse
 import pickle
-from tqdm import tqdm
-
-from .utils import load_map, map_partition, generate_random_agents
 
 # config
 import yaml
 
+from tqdm import tqdm
+
+from .utils import generate_random_agents, load_map, map_partition
+
 # If called from the command line, the following code will be executed
 try:
-    config = yaml.safe_load(open("./config.yaml", 'r'))
+    config = yaml.safe_load(open("./config.yaml", "r"))
 except:
-    config = yaml.safe_load(open("./src/data/config.yaml", 'r'))
+    config = yaml.safe_load(open("./src/data/config.yaml", "r"))
 
 
-def generate_movingai(num_instances, test_env_settings=config['test_env_settings']):
+def generate_movingai(num_instances, test_env_settings=config["test_env_settings"]):
     for map_name, num_agents in test_env_settings:
         instances = []
         grid_map = load_map(map_name)
@@ -24,7 +25,7 @@ def generate_movingai(num_instances, test_env_settings=config['test_env_settings
             starts, goals = generate_random_agents(grid_map, map_partitions, num_agents)
             instances.append((grid_map, starts, goals))
         file_name = f"./test_set/{map_name}_{num_agents}agents.pth"
-        with open(file_name, 'wb') as f:
+        with open(file_name, "wb") as f:
             pickle.dump(instances, f)
 
 

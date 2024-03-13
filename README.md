@@ -2,6 +2,7 @@
 
 [![arXiv](https://img.shields.io/badge/arXiv-2403.07559-b31b1b.svg)](https://arxiv.org/abs/2403.07559)
 
+![image](assets/main-eph.png)
 
 ## Usage
 
@@ -61,6 +62,14 @@ This will load the `Network` class from the `model.py` module.
 ## Data generation
 Go to [src/data/](src/data/) and follow the instructions in the [README.md](src/data/README.md) for generating the MovingAI's test set.
 
+
+### Acknowledgements
+
+Our codebase is heavily based on DHC (https://github.com/ZiyuanMa/DHC) and DCC (https://github.com/ZiyuanMa/DCC). We used some inspiration from SCRIMP for our communication block (https://github.com/marmotlab/SCRIMP) and reimplemented structured maps experiments of MovingAI datasets from SACHA (https://github.com/Qiushi-Lin/SACHA).
+
+We are also looking into implementing MAPF in some modern platform (i.e. TorchRL enviroments and integration with RL4CO) once we have some bandwidth to do so!
+
+---
 
 ### Citation
 

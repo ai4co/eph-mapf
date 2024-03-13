@@ -6,7 +6,7 @@ import yaml
 
 from tqdm import tqdm
 
-from .utils import generate_random_agents, load_map, map_partition
+from utils import generate_random_agents, load_map, map_partition
 
 # If called from the command line, the following code will be executed
 try:

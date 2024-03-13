@@ -3,7 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.cuda.amp import autocast
-from config import config
+
+from src.config import config
 
 class CommLayer(nn.Module):
 

@@ -6,6 +6,9 @@ converting everything that can be immutable into an immutable structure
 
 Intended to support both mstar and rMstar."""
 
+# Add src to path
+import sys; sys.path.append('src')
+
 
 from od_mstar3 import workspace_graph
 import sys

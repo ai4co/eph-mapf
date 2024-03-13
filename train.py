@@ -4,8 +4,9 @@ import time
 import torch
 import numpy as np
 import ray
-from worker import GlobalBuffer, Learner, Actor
-from config import config
+
+from src.worker import GlobalBuffer, Learner, Actor
+from src.config import config
 
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.manual_seed(0)

@@ -9,7 +9,7 @@ name = 'sacha_testset'
 run_id = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 # Network setting
-model_target = "model.Network"
+model_target = "src.models.eph.Network"
 
 
 # For saving model

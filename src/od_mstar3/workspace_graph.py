@@ -84,6 +84,9 @@ Module urrently assumes that all actions have equal cost (including
 diagonal vs non-diagonal move
 """
 
+# Add src to path
+import sys; sys.path.append('src')
+
 from od_mstar3.col_set_addition import add_col_set_recursive, add_col_set
 from od_mstar3.col_set_addition import NoSolutionError
 from od_mstar3 import SortedCollection

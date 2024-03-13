@@ -9,8 +9,8 @@ import wandb
 import time
 import random
 
-from environment import Environment
-from config import config
+from src.environment import Environment
+from src.config import config
 
 # NOTE: This validation script is designed to be run in a separate process.
 

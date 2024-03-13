@@ -1,10 +1,11 @@
 import random
 from typing import List, Union
 import numpy as np
-from config import config
 import torch 
-from od_mstar3 import od_mstar
-from od_mstar3.col_set_addition import NoSolutionError, OutOfTimeError
+
+from src.od_mstar3 import od_mstar
+from src.od_mstar3.col_set_addition import NoSolutionError, OutOfTimeError
+from src.config import config
 
 ACTION_LIST = np.array([[-1, 0],[1, 0],[0, -1],[0, 1], [0, 0]], dtype=int)
 DIRECTION_TO_ACTION = {(-1, 0): 0, (1, 0): 1, (0, -1): 2, (0, 1): 3, (0, 0): 4}

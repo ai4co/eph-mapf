@@ -1,7 +1,8 @@
 import math
 from dataclasses import dataclass
 import numpy as np
-from config import config
+
+from src.config import config
 
 
 @dataclass

@@ -3,13 +3,13 @@ from common import *
 
 
 # Wandb setting
-use_wandb = True
+use_wandb = False # change to True if you want to use it!
 project = 'FinalTest'
 name = 'eph'
 run_id = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 # Network setting
-model_target = "model.Network"
+model_target = "src.models.eph.Network"
 
 
 # For saving model

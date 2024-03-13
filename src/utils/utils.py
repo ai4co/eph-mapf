@@ -24,7 +24,7 @@ def timeout(seconds, default_value=""):
         return wrapper
     return decorator
 
-
+# Note: run from the root directory of the project
 def load_config(file_path='configs/default.py'):
     '''
     Load config file and transform it into the format of wandb. For wandb recording. 

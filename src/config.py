@@ -4,7 +4,7 @@ CONFIG_NAME = "eph" # Default config name
 config_name = os.getenv("CONFIG") or CONFIG_NAME
 
 # Load corresponding config
-from utils import load_config
+from src.utils.utils import load_config
 
 config = load_config(f"configs/{config_name}.py")
 # Testing

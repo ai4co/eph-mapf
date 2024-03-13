@@ -12,13 +12,14 @@ from torch.optim import Adam
 from torch.optim.lr_scheduler import MultiStepLR
 from torch.cuda.amp import GradScaler
 import numpy as np
-from environment import Environment
-from buffer import SumTree, LocalBuffer, EpisodeData
-from config import config
 import subprocess
 
+
+from src.environment import Environment
+from src.buffer import SumTree, LocalBuffer, EpisodeData
+from src.config import config
+
 import wandb
-from utils import load_config
 
 from hydra.utils import instantiate
 

@@ -9,10 +9,11 @@ from tqdm import tqdm
 import numpy as np
 import torch
 import torch.multiprocessing as mp
-from environment import Environment
-from config import config
-from utils import timeout
 import time
+
+from src.environment import Environment
+from src.config import config
+from src.utils.utils import timeout
 
 from hydra.utils import instantiate
 

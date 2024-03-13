@@ -14,10 +14,11 @@ conda create -n eph python=3.11
 conda activate eph
 ```
 
-Install the required packages using the following command:
+Install the repo locally (with requirements listed in [pyproject.toml](pyproject.toml)):
 ```bash
-pip install -r requirements.txt
+pip install -e '.[all]'
 ```
+Note: remove `[all]` if you don't want to install the optional dependencies.
 
 ### Configuration
 To train and test we need to load the configuration file. under [configs/](configs/) you can find the default configuration file [eph.py](configs/eph.py). To change the configuration or create a new one, you can use export the "CONFIG" environment variable as the desired configuration name without the `.py` extension:

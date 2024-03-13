@@ -108,4 +108,13 @@ def main(height,width,density,num_agents,num_instances):
 
 
 if __name__ == "__main__":
-    main(40,40,0.3,4,100)
+    import argparse
+    parser = argparse.ArgumentParser(description='Generate random maps and agents for testing')
+    parser.add_argument('--width', type=int, default=40, help='Width of the map')
+    parser.add_argument('--height', type=int, default=40, help='Height of the map')
+    parser.add_argument('--density', type=float, default=0.3, help='Density of the map')
+    parser.add_argument('--num_agents', type=int, default=4, help='Number of agents')
+    parser.add_argument('--num_instances', type=int, default=100, help='Number of instances')
+    args = parser.parse_args()
+
+    main(args.height, args.width, args.density, args.num_agents, args.num_instances)

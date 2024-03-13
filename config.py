@@ -1,17 +1,15 @@
-######################################
-# Only need to set the config name here to load it
-# CONFIG_NAME = "eph-base"
-CONFIG_NAME = "eph"
-######################################
+import os
 
+CONFIG_NAME = "eph" # Default config name
+config_name = os.getenv("CONFIG") or CONFIG_NAME
+
+# Load corresponding config
 from utils import load_config
 
-config = load_config(f"configs/{CONFIG_NAME}.py")
+config = load_config(f"configs/{config_name}.py")
 # Testing
 if __name__ == '__main__':
     import rich
     from omegaconf import OmegaConf
     
-    print(dict(config))
-
     rich.print(OmegaConf.to_yaml(config))

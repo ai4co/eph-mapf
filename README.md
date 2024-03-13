@@ -1,5 +1,7 @@
 # EPH: Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding
 
+[![arXiv](https://img.shields.io/badge/arXiv-2403.07559-b31b1b.svg)](https://arxiv.org/abs/2403.07559)
+
 
 ## Usage
 
@@ -59,3 +61,16 @@ This will load the `Network` class from the `model.py` module.
 ## Data generation
 Go to [src/data/](src/data/) and follow the instructions in the [README.md](src/data/README.md) for generating the MovingAI's test set.
 
+
+### Citation
+
+If you find our code or work (or hopefully both!) helpful, please consider citing us:
+
+```bibtex
+@article{tang2024eph,
+  title={Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding},
+  author={Tang, Huijie and Berto, Federico and Park, Jinkyoo},
+  journal={arXiv preprint arXiv:2403.07559},
+  year={2024}
+}
+```

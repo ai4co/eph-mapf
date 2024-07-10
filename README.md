@@ -4,6 +4,17 @@
 
 ![image](assets/main-eph.png)
 
+<table align="center">
+  <tr>
+    <td>
+      <div align="center">
+        <b>News</b>: EPH has been accepted at <a href="https://iros2024-abudhabi.org/"> IROS 2024 </a>! <a href="https://github.com/ai4co"> <img src="https://raw.githubusercontent.com/ai4co/assets/main/svg/ai4co_animated.svg" alt="AI4CO Logo" style="height: 1em; vertical-align: middle; transform: translateY(-20%);"> </a>
+      </div>
+    </td>
+  </tr>
+</table>
+
+
 ## Usage
 
 ### Installation
@@ -83,10 +94,12 @@ https://github.com/ai4co/eph-mapf/assets/48984123/9d3cd421-1460-4a2f-aaa4-11908c
 If you find our code or work (or hopefully both!) helpful, please consider citing us:
 
 ```bibtex
-@article{tang2024eph,
+@inproceedings{tang2024eph,
   title={Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding},
   author={Tang, Huijie and Berto, Federico and Park, Jinkyoo},
-  journal={arXiv preprint arXiv:2403.07559},
-  year={2024}
+  booktitle={2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  organization={IEEE},
+  year={2024},
+  note={\url{https://github.com/ai4co/eph-mapf}}
 }
 ```

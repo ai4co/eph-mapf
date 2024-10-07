@@ -1,6 +1,7 @@
 # EPH: Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding
 
-[![arXiv](https://img.shields.io/badge/arXiv-2403.07559-b31b1b.svg)](https://arxiv.org/abs/2403.07559) <a href="https://colab.research.google.com/github/ai4co/eph-mapf/blob/main/quickstart.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
+[![arXiv](https://img.shields.io/badge/arXiv-2403.07559-b31b1b.svg)](https://arxiv.org/abs/2403.07559) [![Slack](https://img.shields.io/badge/slack-chat-611f69.svg?logo=slack)](https://join.slack.com/t/rl4co/shared_invite/zt-1ytz2c1v4-0IkQ8NQH4TRXIX8PrRmDhQ)[![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)]
+<a href="https://colab.research.google.com/github/ai4co/eph-mapf/blob/main/quickstart.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 
 ![image](assets/main-eph.png)
 

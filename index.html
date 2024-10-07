@@ -220,16 +220,32 @@
       <p><strong>EPH</strong>. EPH can be divided into two parts, as shown in the above picture. The upper part shows the neural network structure of EPH, and how local partial observations are transformed into Q vectors. The lower part shows that instead of getting action by directly applying \( a^t_i = \text{argmax} (q^t_i) \), several inference techniques, as mentioned in the <em>Contributions</em>, can be used to improve actions quality and avoid collisions.</p>
 
       <p><strong>Training Method</strong>. The Q value for agent \(i\) is obtained via:</p>
-        \[
-          Q_{s,a}^{i} = Val_s\left(e_{i}^{t}\right) +  Adv\left(e_{i}^{t}\right)_a - \frac{1}{\left|\mathcal{A}\right|} \sum_{a'} Adv\left(e_{i}^{t}\right)_{a'}
-        \]
+      <div style="overflow-x:auto;">
+        <p>
+          \[
+          Q_{s,a}^{i} = Val_s\left(e_{i}^{t}\right) + Adv\left(e_{i}^{t}\right)_a 
+          \]
+        </p>
+        <p style="text-align: center;">
+          \[
+          - \frac{1}{\left|\mathcal{A}\right|} \sum_{a'} Adv\left(e_{i}^{t}\right)_{a'}
+          \]
+        </p>
+      </div>
+      
       <p>Train by minimizing:</p>
-        \[
+      <div style="overflow-x:auto;">
+        <p>
+          \[
           \mathcal{L}(\theta) = \text{MSE} \left( R_t^i - Q_{s_t,a_t}^i (\theta) \right)
-        \]
+          \]
+        </p>
+      </div>
     </div>
   </div>
 </section>
+
+
 
 
 <section class="hero inference-techniques">

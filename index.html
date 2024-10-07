@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding">
+  <meta property="og:title" content="EPH"/>
+  <meta property="og:description" content="Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding"/>
+  <meta property="og:url" content="https://ai4co.github.io/eph-mapf"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/images/ai4co.svg" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding</title>
+  <link rel="icon" type="image/x-icon" href="static/images/ai4co.svg"> 
+     <!-- Here: you may change to a favicon! We are using an SVG for faster load times and max quality -->
+  <link rel="icon" type="image/svg" href='static/images/icon.svg' />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="stylesheet" href="static/css/code.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+  <script src="static/js/copy-button.js"></script>
+  <textarea id="hidden-textarea" style="position: absolute; left: -9999px;" aria-hidden="true"></textarea>
+
+
+<!-- Note: comment below if not needed for faster loading -->
+<!-- Syntax highlighting for code cells -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script>hljs.highlightAll();</script>
+
+<!-- Math rendering -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+
+
+</head>
+
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a href="https://github.com/xinshen0746" target="_blank">Huijie Tang</a><sup>*1,2</sup>,</span>
+                <span class="author-block">
+                  <a href="https://github.com/fedebotu" target="_blank">Federico Berto</a><sup>*1,2</sup>,</span>
+                  <span class="author-block">
+                    <a href="http://silab.kaist.ac.kr/our-team/" target="_blank">Jinkyoo Park</a><sup>1,2</sup>
+                  </span>
+                  </div>
+
+                  <div class="is-size-5 publication-authors">
+                    <span class="author-block"><sup>1</sup>KAIST, <sup>2</sup>OMELET AI4CO<sup>&dagger;</sup> <br>IROS 2024</span>
+                    <span class="eql-cntrb"><small><br><sup>*</sup>Equal Contributions</small></span>
+                  </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                         <!-- Arxiv PDF link -->
+                      <span class="link-block">
+                        <a href="https://arxiv.org/pdf/2403.07559.pdf" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+
+                    <!-- Supplementary PDF link -->
+                    <!-- <span class="link-block">
+                      <a href="static/pdfs/supplementary_material.pdf" target="_blank"
+                      class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon">
+                        <i class="fas fa-file-pdf"></i>
+                      </span>
+                      <span>Supplementary</span>
+                    </a>
+                  </span> -->
+
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/eph-mapf" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                <!-- ArXiv abstract Link -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2403.07559" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+
+                <!-- Slack Link (AI4CO) -->
+                <span class="link-block">
+                  <a href="https://bit.ly/ai4co-slack" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-slack"></i>
+                    </span>
+                    <span>Slack</span>
+                  </a>
+                </span>
+            
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Title Image -->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <img src="static/images/Overview.svg" alt="EPH Overview" width="960px"/>
+      </div>
+    </div>
+  </section>
+  <!-- End teaser video -->
+   
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Multi-Agent Reinforcement Learning (MARL) based Multi-Agent Path Finding
+            (MAPF) has recently gained attention due to its efficiency and scalability.
+            Several MARL-MAPF methods choose to use communication to enrich the
+            information one agent can perceive. However, existing works still struggle
+            in structured environments with high obstacle density and a high number
+            of agents. To further improve the performance of the communication-based
+            MARL-MAPF solvers, we propose a new method, Ensembling Prioritized
+            Hybrid Policies (EPH). We first propose a selective communication block to
+            gather richer information for better agent coordination within multi-agent
+            environments and train the model with a Q-learning-based algorithm. We
+            further introduce three advanced inference strategies aimed at bolstering
+            performance during the execution phase. First, we hybridize the neural
+            policy with single-agent expert guidance for navigating conflict-free zones.
+            Secondly, we propose Q value-based methods for prioritized resolution of
+            conflicts as well as deadlock situations. Finally, we introduce a robust
+            ensemble method that can efficiently collect the best out of multiple possible
+            solutions. We empirically evaluate EPH in complex multi-agent environments
+            and demonstrate competitive performance against state-of-the-art neural
+            methods for MAPF.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+<section class="hero contributions">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 is-3-light">Contributions</h2>
+    <div class="hero-body">
+      <p>We propose <strong>EPH</strong> (<em>Ensembling Prioritized Hybrid Policies</em>), a Q-learning-based MARL-MAPF solver with communication. Our key contributions include:</p>
+      <ol>
+        <li><strong>Selective Communication</strong>: Enhanced communication block using Transformer-inspired improvements for better information extraction.</li>
+        <li><strong>Priority Conflict Resolution</strong>: Q value-based decisions to prioritize agents in conflicts and resolve deadlocks with an Advanced Escape Policy.</li>
+        <li><strong>Hybrid Expert Guidance</strong>: Guidance for agents without nearby live agents during inference.</li>
+        <li><strong>Ensembling Solvers</strong>: Sampling best solutions from multiple solvers running in parallel.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="hero method is-light">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 is-3-light">EPH</h2>
+    <div class="hero-body">
+      <p><strong>EPH</strong>. EPH can be divided into two parts, as shown in the above picture. The upper part shows the neural network structure of EPH, and how local partial observations are transformed into Q vectors. The lower part shows that instead of getting action by directly applying \( a^t_i = \text{argmax} (q^t_i) \), several inference techniques, as mentioned in the <em>Contributions</em>, can be used to improve actions quality and avoid collisions.</p>
+
+      <p><strong>Training Method</strong>. The Q value for agent \(i\) is obtained via:</p>
+        \[
+          Q_{s,a}^{i} = Val_s\left(e_{i}^{t}\right) +  Adv\left(e_{i}^{t}\right)_a - \frac{1}{\left|\mathcal{A}\right|} \sum_{a'} Adv\left(e_{i}^{t}\right)_{a'}
+        \]
+      <p>Train by minimizing:</p>
+        \[
+          \mathcal{L}(\theta) = \text{MSE} \left( R_t^i - Q_{s_t,a_t}^i (\theta) \right)
+        \]
+    </div>
+  </div>
+</section>
+
+
+<section class="hero inference-techniques">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 is-3-light">Inference Techniques</h2>
+    <div class="hero-body">
+      <div class="columns">
+        <div class="column is-half">
+          <p><strong><em>Hybrid Expert Guidance</em></strong></p>
+          <p>When agent communication is sparse (e.g., no other agents in FOV), we incorporate low-cost single-agent expert \( \tau \). We propose using the optimal \( A^* \) path as expert guidance for an agent with no other <em>live</em> agents within a radius \( \rho \).</p>
+        </div>
+        <div class="column is-half">
+          <img src="static/images/astar.svg" alt="A* Path Guidance" style="width:100%;">
+        </div>
+      </div>
+
+      <div class="columns">
+        <div class="column is-half">
+          <p><strong><em>Prioritized Conflict Resolution</em></strong></p>
+          <p>For conflict actions derived from Q vectors, we prioritize agents by their Q values. The agent with the highest Q value \( q^t_i \) gets top priority, while others re-choose actions with previous actions masked.</p>
+        </div>
+        <div class="column is-half">
+          <img src="static/images/priority.svg" alt="Priority Conflict Resolution" style="width:80%; margin: 0 auto;">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero experiment-results is-light">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 is-3-light">Experimental Results</h2>
+    <div class="hero-body">
+      <div class="columns">
+        <div class="column is-half">
+          <img src="static/images/success_rate.svg" alt="Success Rate" style="width:100%;">
+        </div>
+        <div class="column is-half">
+          <img src="static/images/average_step.svg" alt="Average Step" style="width:100%;">
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column">
+          <img src="static/images/table-cropped.svg" alt="Experiment Table" style="width:100%;">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Video carousel -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3">Videos</h2>
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-video1">
+          <video poster="" id="video1" autoplay controls muted loop height="100%">
+            <!-- Your video file here -->
+            <source src="static/videos/eph-64-40-40.mp4"
+            type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-video2">
+          <video poster="" id="video2" autoplay controls muted loop height="100%">
+            <!-- Your video file here -->
+            <source src="static/videos/eph-64-den312d.mp4"
+            type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-video3">
+          <video poster="" id="video3" autoplay controls muted loop height="100%">\
+            <!-- Your video file here -->
+            <source src="static/videos/eph-64-warehouse.mp4"
+            type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End video carousel -->
+
+
+
+
+
+<!-- BibText citation + copy to clipboard -->
+<section class="section" id="Code">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <div class="code-container">
+      <pre><code class="code-content language-text">@inproceedings{tang2024eph,
+        title={Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding},
+        author={Tang, Huijie and Berto, Federico and Park, Jinkyoo},
+        booktitle={2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+        organization={IEEE},
+        year={2024},
+        note={\url{https://github.com/ai4co/eph-mapf}}
+}</code></pre>
+      <button class="copy-button" aria-label="Copy to clipboard">
+        <svg class="copy-icon" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+        </svg>
+        <svg class="checkmark-icon" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
+        </svg>
+      </button>
+      <div class="copy-tooltip">Copy to clipboard</div>
+    </div>
+  </div>
+</section>
+    
+</section>
+<!--End BibTex citation -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/ai4co/research-project-page-template" target="_blank">Research Project Page Template</a> which is based on 
+            the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> and the 
+            <a href="https://nerfies.github.io" target="_blank">Nerfies project page</a>. You are free to borrow the of this website, we just ask that you link back to this page in the footer.
+            This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+  </html>

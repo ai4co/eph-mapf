@@ -236,3 +236,45 @@ img {
     padding-top: 0; /* Remove padding-top for larger screens */
   }
 }
+
+
+.logos-section {
+  padding: 2em 0;
+  background-color: #ffffff; /* Optional: Add background color for the section */
+}
+
+
+.logos-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.logo-item {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 0 1em;
+}
+
+.logo-item img {
+  max-height: 100px;
+  max-width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease, filter 0.3s ease; /* Smooth transition for transform and shadow */
+  will-change: transform, filter; /* Optimizes animation performance */
+  filter: none; /* No shadow when not hovered */
+}
+
+/* Hover effect with pop-up and shadow */
+.logo-item:hover img {
+  transform: scale(1.1); /* Slightly enlarge the logo */
+  filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.4)); /* Only add shadow on hover */
+}
+
+/* Optional: Press effect on click */
+.logo-item:active img {
+  transform: scale(1.05); /* Slight press-down effect */
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2)); /* Lighter shadow on click */
+}

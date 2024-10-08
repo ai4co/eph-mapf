@@ -141,16 +141,6 @@
   </div>
 </section>
 
-
-  <!-- Title Image -->
-  <section class="hero teaser">
-    <div class="container is-max-desktop">
-      <div class="hero-body">
-        <img src="static/images/Overview.svg" alt="EPH Overview" width="960px"/>
-      </div>
-    </div>
-  </section>
-  <!-- End teaser video -->
    
 
 <!-- Paper abstract -->
@@ -188,10 +178,12 @@
 </section>
 <!-- End paper abstract -->
 
+  
 <section class="hero contributions">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 is-3-light">Contributions</h2>
     <div class="hero-body">
+      <h2 class="title is-3 is-3-light">Contributions</h2>
+      <img src="static/images/Overview.svg" alt="EPH Overview" width="960px"/>
       <p>We propose <strong>EPH</strong> (<em>Ensembling Prioritized Hybrid Policies</em>), a Q-learning-based MARL-MAPF solver with communication. Our key contributions include:</p>
       <ol>
         <li><strong>Selective Communication</strong>: Enhanced communication block using Transformer-inspired improvements for better information extraction.</li>
@@ -205,8 +197,8 @@
 
 <section class="hero method is-light">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 is-3-light">EPH</h2>
     <div class="hero-body">
+      <h2 class="title is-3 is-3-light">EPH</h2>
       <p><strong>EPH</strong>. EPH can be divided into two parts, as shown in the above picture. The upper part shows the neural network structure of EPH, and how local partial observations are transformed into Q vectors. The lower part shows that instead of getting action by directly applying \( a^t_i = \text{argmax} (q^t_i) \), several inference techniques, as mentioned in the <em>Contributions</em>, can be used to improve actions quality and avoid collisions.</p>
 
       <p><strong>Training Method</strong>. The Q value for agent \(i\) is obtained via:</p>
@@ -240,8 +232,8 @@
 
 <section class="hero inference-techniques">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 is-3-light">Inference Techniques</h2>
     <div class="hero-body">
+      <h2 class="title is-3 is-3-light">Inference Techniques</h2>
       <div class="columns">
         <div class="column is-half">
           <p><strong><em>Hybrid Expert Guidance</em></strong></p>
@@ -268,8 +260,8 @@
 
 <section class="hero experiment-results is-light">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 is-3-light">Experimental Results</h2>
     <div class="hero-body">
+      <h2 class="title is-3 is-3-light">Experimental Results</h2>
       <div class="columns">
         <div class="column is-half">
           <img src="static/images/success_rate.svg" alt="Success Rate" style="width:100%;">
@@ -327,9 +319,12 @@
 
 
 <!-- BibText citation + copy to clipboard -->
-<section class="section" id="Code">
-  <div class="container is-max-desktop content">
+<section class="hero is-light" id="Code">
+  <div class="hero-body">
+    <div class="container">
+    <br>
     <h2 class="title">BibTeX</h2>
+    If you find this work useful, please consider citing it. We will appreciate it!
     <div class="code-container">
       <pre><code class="code-content language-text">@inproceedings{tang2024eph,
         title={Ensembling Prioritized Hybrid Policies for Multi-agent Pathfinding},
@@ -350,18 +345,48 @@
       <div class="copy-tooltip">Copy to clipboard</div>
     </div>
   </div>
+  <br>
+  </div>
 </section>
     
 </section>
 <!--End BibTex citation -->
 
 
-  <footer class="footer">
+
+<section class="logos-section">
+  <div class="container">
+    <div class="logos-container">
+      <div class="logo-item">
+        <a href="https://kaist.ac.kr/en/" target="_blank">
+          <img src="static/images/logos/kaist_logo.png" alt="KAIST Logo">
+        </a>
+      </div>
+      <div class="logo-item">
+        <a href="https://omelet.ai/" target="_blank">
+          <img src="static/images/logos/omelet.png" alt="Omelet Logo">
+        </a>
+      </div>
+      <div class="logo-item">
+        <a href="https://iros2024-abudhabi.org/" target="_blank">
+          <img src="static/images/logos/iros2024.png" alt="IROS 2024 Logo">
+        </a>
+      </div>
+      <div class="logo-item">
+        <a href="https://github.com/ai4co" target="_blank">
+          <img src="static/images/logos/ai4co.png" alt="AI4CO Logo">
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- <footer class="footer"> -->
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
-
           <p>
             This page was built using the <a href="https://github.com/ai4co/research-project-page-template" target="_blank">Research Project Page Template</a> which is based on 
             the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> and the 
@@ -369,12 +394,11 @@
             This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
             Commons Attribution-ShareAlike 4.0 International License</a>.
           </p>
-
         </div>
       </div>
     </div>
   </div>
-</footer>
-
+  
+<!-- </footer> -->
   </body>
   </html>
